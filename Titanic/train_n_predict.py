@@ -5,9 +5,7 @@ Created on Sat Dec 24 13:27:21 2016
 @author: takashi
 """
 
-from pre_process import extract_train_target
-from pre_process import FILE_PATH_TRAIN_DATA
-from pre_process import FILE_PATH_PREDICT_DATA
+from pre_process import pre_proc_all
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 import sklearn.svm as svm
@@ -65,14 +63,14 @@ def eval_svc_by_x_val():
     
 if __name__=="__main__":
     # Prepare train data and test data
-    train_df, train_target_df = extract_train_target(FILE_PATH_TRAIN_DATA)
-    test_df,       predict_df = extract_train_target(FILE_PATH_PREDICT_DATA)
+    train_df, train_target_df, test_df, predict_df = pre_proc_all()
     
     # Split the train data for cross validation
-    split_train_df, split_val_df, split_train_target_df, split_val_target_df = train_test_split(train_df, train_target_df, test_size=0.15)
+    split_train_df, split_val_df, split_train_target_df, split_val_target_df \
+    = train_test_split(train_df, train_target_df, test_size=0.15)
     
     # Train and evaluate the model
-    C_idx_set, gamma_idx_set = np.mgrid[-10:10:0.5,-10:10:0.5]
+    C_idx_set, gamma_idx_set = np.mgrid[-10.:10.:2.,-10.:10.:2.]
     cols_for_res = ["svc", "score_mean", "score_std"]   #######
     results_set  = pd.DataFrame(columns=cols_for_res)   #######
     score_mean_set   = np.zeros_like(C_idx_set)
@@ -109,6 +107,6 @@ if __name__=="__main__":
     
     # Predict with the test.csv
     print "Parameters of the estimator, svc.C = {0:0.2e}, svc.gamma = {1:0.2e}".format(svc_best.C, svc_best.gamma)
-    print results_set[results_set.svc==svc_best]
-    predict_df = predict_by_SVC_RBF(svc_best, test_df, file_path_save_results="predict.csv")
+    print results_set[results_set.svc==svc_best][["score_mean","score_std"]]
+#    predict_df = predict_by_SVC_RBF(svc_best, test_df, file_path_save_results="predict.csv")
     
