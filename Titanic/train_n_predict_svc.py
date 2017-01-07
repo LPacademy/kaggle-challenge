@@ -57,7 +57,7 @@ if __name__=="__main__":
         
         # Assess the model with cross validation data
         tgt_arr = train_target_df.as_matrix().reshape(-1)
-        scores  = cross_val_score(clf, train_df, tgt_arr, cv=4)
+        scores  = cross_val_score(clf, train_df, tgt_arr, cv=100)
         
         temp = pd.DataFrame([[clf, scores.mean(), scores.std()]], columns=cols_for_res, index=[i])
         results_set = results_set.append(temp) #######
@@ -72,8 +72,8 @@ if __name__=="__main__":
     # Plot images
     score_mean_set = mean.as_matrix().reshape(C_set.shape)
     score_std_set  = std.as_matrix().reshape(C_set.shape)
-    plt.figure("Support Vector Classification", figsize=(16, 9))
-    def subplots_im_data(subplot_pos, im_data, title="Support Vector Classification"):
+    plt.figure("SVC", figsize=(16, 9))
+    def subplots_im_data(subplot_pos, im_data, title=""):
         plt.subplot(subplot_pos)
         plt.imshow(im_data, interpolation="nearest", cmap="nipy_spectral")
         plt.title(title)

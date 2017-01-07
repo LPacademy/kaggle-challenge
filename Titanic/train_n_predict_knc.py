@@ -69,8 +69,8 @@ if __name__=="__main__":
     print results_set[t==t.max()][["score_mean","score_std"]]
                       
     # Plot images
-    plt.figure("K-Neighbors Classification", figsize=(16, 9))
-    def subplots_data(subplot_pos, data, label, title="K-Neighbors Classification"):
+    plt.figure("K-Neighbors", figsize=(16, 9))
+    def subplots_data(subplot_pos, data, label, title=""):
         plt.subplot(subplot_pos)
         plt.plot(n_neighbors_set, data, "o-", label=label)
         plt.xlabel("Number of Neighbors [-]")
