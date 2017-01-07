@@ -107,8 +107,19 @@ def binarize(df):
     return ret_df
 
     
+def fill_null(df, key_of_fill):
+    """
+    Nomarize dataframe without NaN.
+    Fill NaN with kw["key_of_fillna"].
+    Add NaN col
+    Parameters:
+        df: Dataframe
+        (Option) key_of_fillna
+    Returns:
+        out_df: Nomarized dataframe
+    """
+    return df.fillna(key_of_fill)
     
-def normarize(df, **kw):
     """
     Nomarize dataframe without NaN.
     Fill NaN with kw["key_of_fillna"].
@@ -121,13 +132,9 @@ def normarize(df, **kw):
     """
     comm_keys = list( set(df.keys()) & set(KEYS_FOR_NORM) )
     
-    try:
-        t = df[comm_keys].fillna(kw["key_of_fillna"])
-    except:
-        t = df[comm_keys]
-    finally:
-        ret_df = df.copy()
-        ret_df[comm_keys] = (t - t.mean()) / t.std()
+    ret_df = df.copy()
+    t = ret_df[comm_keys]
+    ret_df[comm_keys] = (t - t.mean()) / t.std()
     
     return ret_df
     
@@ -155,7 +162,7 @@ def pre_proc_per_df(df, del_single_cat_cols=False):
     
 #    print txt_w_border("Merging SibSp and Parch to FamSize")
 #    ret_df = merge_SibSp_Parch_to_FamSize(ret_df)
-#    
+    
     print txt_w_border("Filtering " + str(KEYS_FOR_ML))
     ret_df = filter_cols(ret_df)
     
@@ -166,7 +173,10 @@ def pre_proc_per_df(df, del_single_cat_cols=False):
     ret_df = binarize(ret_df)
     
     print txt_w_border("Nomarizing " + str(KEYS_FOR_NORM))
-    ret_df = normarize(ret_df, key_of_fillna=0.)
+    
+    key_of_fill = 0.
+    print txt_w_border("Filling null with " + str(key_of_fill))
+    ret_df = fill_null(ret_df, key_of_fill=key_of_fill)
     
     return ret_df
 

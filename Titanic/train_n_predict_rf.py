@@ -47,7 +47,7 @@ if __name__=="__main__":
     train_df, train_target_df, test_df, predict_df = pre_proc_all()
     
     # Train and evaluate the model
-    n_estimators_set = range(2, 15, 1)
+    n_estimators_set = range(2, 50, 1)
     cols_for_res = ["clf", "score_mean", "score_std"]   #######
     results_set  = pd.DataFrame(columns=cols_for_res)   #######
     for i, n_estimator in enumerate(n_estimators_set):
@@ -56,7 +56,7 @@ if __name__=="__main__":
         
         # Assess the model with cross validation data
         tgt_arr = train_target_df.as_matrix().reshape(-1)
-        scores  = cross_val_score(clf, train_df, tgt_arr, cv=4)
+        scores  = cross_val_score(clf, train_df, tgt_arr, cv=100)
         
         # Record the model and the scores
         temp = pd.DataFrame([[clf, scores.mean(), scores.std()]], columns=cols_for_res, index=[i])
