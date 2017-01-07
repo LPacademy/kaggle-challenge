@@ -72,8 +72,8 @@ if __name__=="__main__":
     # Plot images
     score_mean_set = mean.as_matrix().reshape(C_set.shape)
     score_std_set  = std.as_matrix().reshape(C_set.shape)
-    plt.figure(figsize=(16, 9))
-    def subplots_im_data(subplot_pos, im_data, title):
+    plt.figure("Support Vector Classification", figsize=(16, 9))
+    def subplots_im_data(subplot_pos, im_data, title="Support Vector Classification"):
         plt.subplot(subplot_pos)
         plt.imshow(im_data, interpolation="nearest", cmap="nipy_spectral")
         plt.title(title)
