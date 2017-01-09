@@ -107,19 +107,7 @@ def binarize(df):
     return ret_df
 
     
-def fill_null(df, key_of_fill):
-    """
-    Nomarize dataframe without NaN.
-    Fill NaN with kw["key_of_fillna"].
-    Add NaN col
-    Parameters:
-        df: Dataframe
-        (Option) key_of_fillna
-    Returns:
-        out_df: Nomarized dataframe
-    """
-    return df.fillna(key_of_fill)
-    
+def normalize(df):
     """
     Nomarize dataframe without NaN.
     Fill NaN with kw["key_of_fillna"].
@@ -173,10 +161,11 @@ def pre_proc_per_df(df, del_single_cat_cols=False):
     ret_df = binarize(ret_df)
     
     print txt_w_border("Nomarizing " + str(KEYS_FOR_NORM))
+    ret_df = normalize(ret_df)
     
     key_of_fill = 0.
     print txt_w_border("Filling null with " + str(key_of_fill))
-    ret_df = fill_null(ret_df, key_of_fill=key_of_fill)
+    ret_df = ret_df.fillna(key_of_fill)
     
     return ret_df
 
