@@ -195,5 +195,3 @@ def pre_proc_all():
 
 if __name__=="__main__":
     train_df, train_target_df, test_df, test_target_df = pre_proc_all()
-    print(test_target_df)
-    print(train_df)

@@ -417,3 +417,4 @@ PassengerId,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
 1307,3,"Saether, Mr. Simon Sivertsen",male,38.5,0,0,SOTON/O.Q. 3101262,7.25,,S
 1308,3,"Ware, Mr. Frederick",male,,0,0,359309,8.05,,S
 1309,3,"Peter, Master. Michael J",male,,1,1,2668,22.3583,,C
+,,,,,,,,,,
