@@ -14,33 +14,37 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
+##### hogeeee ###
+
 def train_by_SVC_RBF(C, gamma, split_train_df, split_train_target_df):
     svc = svm.SVC(C=C, gamma=gamma)
     svc.fit(split_train_df, split_train_target_df)
-    
+
     return svc
 
-    
+
+
 def predict_by_SVC_RBF(svc, predictor_df, file_path_save_results=None):
     predict_arr = svc.predict(predictor_df)
-    
+
     # Convert to pandas dataframe from numpy array
     temp_df = predictor_df.copy()
     temp_df["Survived"] = predict_arr
     predict_df = temp_df[["Survived"]].copy()
-    
+
     if file_path_save_results==None:
-        print "Not saved predicted results." 
+        print "Not saved predicted results."
     else:
         try:
             predict_df.to_csv(file_path_save_results)
             print "Saved predicted results in", file_path_save_results+"."
         except:
             print "Failed saving predicted results."
-    
+
     return predict_df
 
-    
+
 def eval_prediction(predict_df, target_df):
     """
     Evaluate predicted objective variables
@@ -59,16 +63,16 @@ def eval_svc_by_x_val():
     """
     Evaluate SVC model
     """
-    
-    
+
+
 if __name__=="__main__":
     # Prepare train data and test data
     train_df, train_target_df, test_df, predict_df = pre_proc_all()
-    
+
     # Split the train data for cross validation
     split_train_df, split_val_df, split_train_target_df, split_val_target_df \
     = train_test_split(train_df, train_target_df, test_size=0.15)
-    
+
     # Train and evaluate the model
     C_idx_set, gamma_idx_set = np.mgrid[-10.:10.:2.,-10.:10.:2.]
     cols_for_res = ["svc", "score_mean", "score_std"]   #######
@@ -78,7 +82,7 @@ if __name__=="__main__":
     score_mean_prev  = 0.0
     for i, (C, gamma) in enumerate(zip(2.0**C_idx_set.reshape(-1), 2.0**gamma_idx_set.reshape(-1))):
         svc = train_by_SVC_RBF(C, gamma, split_train_df, split_train_target_df)
-        
+
         # Assess the model with cross validation data
         scores = cross_val_score(svc, train_df.as_matrix(), train_target_df.as_matrix().reshape(-1), cv=10)
         score_mean_set.reshape(-1)[i] = score_mean = scores.mean()
@@ -90,8 +94,8 @@ if __name__=="__main__":
         if scores.mean()>score_mean_prev:
             svc_best = svc
             score_mean_prev = scores.mean()
-        
-    
+
+
     # Plot images
     plt.figure(figsize=(16, 9))
     def subplots_im_data(subplot_pos, im_data, title):
@@ -104,9 +108,8 @@ if __name__=="__main__":
     subplots_im_data(223, score_mean_set,"Mean of Score" )
     subplots_im_data(224, score_std_set, "Std of Score")
     plt.show()
-    
+
     # Predict with the test.csv
     print "Parameters of the estimator, svc.C = {0:0.2e}, svc.gamma = {1:0.2e}".format(svc_best.C, svc_best.gamma)
     print results_set[results_set.svc==svc_best][["score_mean","score_std"]]
 #    predict_df = predict_by_SVC_RBF(svc_best, test_df, file_path_save_results="predict.csv")
-    
