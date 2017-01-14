@@ -178,6 +178,7 @@ def pre_proc_all():
     print txt_w_border("Importing " + FILE_PATH_PREDICT_DATA)
     raw_test_df = load_titanic_csv(FILE_PATH_PREDICT_DATA)
     ## load csvfile (& Survived add)
+    ## hogehoge
 
     raw_all_df  = pd.concat([raw_train_df, raw_test_df])
     t_df = pre_proc_per_df(raw_all_df, del_single_cat_cols=True)
