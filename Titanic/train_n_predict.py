@@ -30,13 +30,13 @@ def predict_by_SVC_RBF(svc, predictor_df, file_path_save_results=None):
     predict_df = temp_df[["Survived"]].copy()
     
     if file_path_save_results==None:
-        print "Not saved predicted results." 
+        print("Not saved predicted results.")
     else:
         try:
             predict_df.to_csv(file_path_save_results)
-            print "Saved predicted results in", file_path_save_results+"."
+            print("Saved predicted results in", file_path_save_results+".")
         except:
-            print "Failed saving predicted results."
+            print("Failed saving predicted results.")
     
     return predict_df
 
@@ -45,7 +45,7 @@ def eval_prediction(predict_df, target_df):
     """
     Evaluate predicted objective variables
     Parameters:
-        predict_df: Predicted objective variables in dataframe
+        predict_df: Predicted objective variables in idataframe
         target_df: Answer of objective variables in dataframe
     Returns:
         conf_mat: Confusion matrix
@@ -85,8 +85,8 @@ if __name__=="__main__":
         score_std_set.reshape(-1)[i]  = score_std  = scores.std()
         temp = pd.DataFrame([[svc, score_mean, score_std]], columns=cols_for_res, index=[i])
         results_set = results_set.append(temp) #######
-        print "{0:4d}/{1:4d} Param C: {2:0.2e}, gamma: {3:0.2e}, ".format(i, C_idx_set.size, C, gamma),
-        print "Score mean: {0:0.3f}, std: {1:0.3f}".format(scores.mean(), scores.std())
+        print("{0:4d}/{1:4d} Param C: {2:0.2e}, gamma: {3:0.2e}, ".format(i, C_idx_set.size, C, gamma))
+        print("Score mean: {0:0.3f}, std: {1:0.3f}".format(scores.mean(), scores.std()))
         if scores.mean()>score_mean_prev:
             svc_best = svc
             score_mean_prev = scores.mean()
@@ -106,7 +106,7 @@ if __name__=="__main__":
     plt.show()
     
     # Predict with the test.csv
-    print "Parameters of the estimator, svc.C = {0:0.2e}, svc.gamma = {1:0.2e}".format(svc_best.C, svc_best.gamma)
-    print results_set[results_set.svc==svc_best][["score_mean","score_std"]]
+    print("Parameters of the estimator, svc.C = {0:0.2e}, svc.gamma = {1:0.2e}".format(svc_best.C, svc_best.gamma))
+    print(results_set[results_set.svc==svc_best][["score_mean","score_std"]])
 #    predict_df = predict_by_SVC_RBF(svc_best, test_df, file_path_save_results="predict.csv")
     

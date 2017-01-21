@@ -1,9 +1,28 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Dec 23 22:32:16 2016
+#!/usr/bin/env python
+from __future__ import print_function
+import argparse
 
-@author: takashi
-"""
+import chainer
+import chainer.functions as F
+import chainer.links as L
+from chainer import training
+from chainer.training import extensions
+
+class MLP(chainer.Chain):
+
+    def __init__(self, n_units, n_out):
+        super(MLP, self).__init__(
+            # the size of the inputs to each layer will be inferred
+            l1=L.Linear(None, n_units),  # n_in -> n_units
+            l2=L.Linear(None, n_units),  # n_units -> n_units
+            l3=L.Linear(None, n_out),  # n_units -> n_out
+        )
+
+    def __call__(self, x):
+        h1 = F.relu(self.l1(x))
+        h2 = F.relu(self.l2(h1))
+        return self.l3(h2)
+
 
 import numpy as np
 import pandas as pd
@@ -47,27 +66,27 @@ def print_info(df, start=0, end=4, details=1):
     """
     Print some information of the input dataframe.
     Parameters:
-        df: Dataframe to print its info
+        df: Dataframe to print(its info
         start: start index for sample
         end: last index for sample
     Returns:
         sample_df: The first max 10 dataframe
     """
-    print txt_w_border("Info")
-    print df.info()
+    print(txt_w_border("Info"))
+    print(df.info())
     
     if details>1:
-        print txt_w_border("Statistics")
-        print df.describe(percentiles=[])
+        print(txt_w_border("Statistics"))
+        print(df.describe(percentiles=[]))
     
     if details>2:
         try:
             sample_df = df[start:end].copy()
-            print txt_w_border("Samples, " + str(start) + " to " + str(end))
+            print(txt_w_border("Samples, " + str(start) + " to " + str(end)))
         except:
             sample_df = df.head()
-            print txt_w_border("Samples, df.head")
-        print sample_df
+            print(txt_w_border("Samples, df.head"))
+        print(sample_df)
     
     return None
 
@@ -148,33 +167,33 @@ def merge_SibSp_Parch_to_FamSize(df):
 def pre_proc_per_df(df, del_single_cat_cols=False):
     ret_df = df.copy()
     
-#    print txt_w_border("Merging SibSp and Parch to FamSize")
+#    print(txt_w_border("Merging SibSp and Parch to FamSize")
 #    ret_df = merge_SibSp_Parch_to_FamSize(ret_df)
     
-    print txt_w_border("Filtering " + str(KEYS_FOR_ML))
+    print(txt_w_border("Filtering " + str(KEYS_FOR_ML)))
     ret_df = filter_cols(ret_df)
     
-    print txt_w_border("Adding null flag columns")
+    print(txt_w_border("Adding null flag columns"))
     ret_df = add_null_flag_cols(ret_df, del_single_cat_cols)
     
-    print txt_w_border("Binarizing " + str(BINARIZED_CAT_DICT.keys()))
+    print(txt_w_border("Binarizing " + str(BINARIZED_CAT_DICT.keys())))
     ret_df = binarize(ret_df)
     
-    print txt_w_border("Nomarizing " + str(KEYS_FOR_NORM))
+    print(txt_w_border("Nomarizing " + str(KEYS_FOR_NORM)))
     ret_df = normalize(ret_df)
     
     key_of_fill = 0.
-    print txt_w_border("Filling null with " + str(key_of_fill))
+    print(txt_w_border("Filling null with " + str(key_of_fill)))
     ret_df = ret_df.fillna(key_of_fill)
     
     return ret_df
 
 
 def pre_proc_all():
-    print txt_w_border("Importing " + FILE_PATH_TRAIN_DATA)
+    print(txt_w_border("Importing " + FILE_PATH_TRAIN_DATA))
     raw_train_df = load_titanic_csv(FILE_PATH_TRAIN_DATA)
     
-    print txt_w_border("Importing " + FILE_PATH_PREDICT_DATA)
+    print(txt_w_border("Importing " + FILE_PATH_PREDICT_DATA))
     raw_test_df = load_titanic_csv(FILE_PATH_PREDICT_DATA)
     
     raw_all_df  = pd.concat([raw_train_df, raw_test_df])
@@ -190,8 +209,47 @@ def pre_proc_all():
     
     return train_df, train_target_df, test_df, test_target_df
     
+def main():
+    parser = argparse.ArgumentParser(description='Exploring Survival on the Titanic -kaggle-')
+    parser.add_argument('--batchsize', '-b', type=int, default=100,
+                        help='Number of data in each mini-batch')
+    parser.add_argument('--epoch', '-e', type=int, default=20,
+                        help='Number of sweeps over the dataset to train')
+    parser.add_argument('--gpu', '-g', type=int, default=-1,
+                        help='GPU ID (negative value indicates CPU)')
+    parser.add_argument('--out', '-o', default='result',
+                        help='Directory to output the result')
+    parser.add_argument('--resume', '-r', default='',
+                        help='Resume the training from snapshot')
+    parser.add_argument('--unit', '-u', type=int, default=1000,
+                        help='Number of units')
+    args = parser.parse_args()
+
+    print('GPU: {}'.format(args.gpu))
+    print('# unit: {}'.format(args.unit))
+    print('# Minibatch-size: {}'.format(args.batchsize))
+    print('# epoch: {}'.format(args.epoch))
+    print('')
+
+    # Set up a neural network to train
+    # Classifier reports softmax cross entropy loss and accuracy at every
+    # iteration, which will be used by the PrintReport extension below.
+    model = L.Classifier(MLP(args.unit, 10))
+    if args.gpu >= 0:
+        chainer.cuda.get_device(args.gpu).use()  # Make a specified GPU current
+        model.to_gpu()  # Copy the model to the GPU
+
+    # Setup an optimizer
+    optimizer = chainer.optimizers.Adam()
+    optimizer.setup(model)
+
+     # Load the Titanic dataset
+    train, test = chainer.datasets.get_mnist()
+
+    train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
+    test_iter = chainer.iterators.SerialIterator(test, args.batchsize,
+                                                 repeat=False, shuffle=False)
     
 if __name__=="__main__":
-    train_df, train_target_df, test_df, test_target_df = pre_proc_all()
-
+    main()
     
