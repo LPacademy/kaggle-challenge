@@ -8,6 +8,4 @@
 /Titanic/__pycache__
 /venv
 .vs
-*.pyproj
-*.sln
 *.pyc
