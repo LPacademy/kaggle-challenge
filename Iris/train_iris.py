@@ -142,10 +142,14 @@ def main():
     X_train = np.array([i[1:] for i in train_data])
     y_train, y_train_onehot = convert_onehot(train_data)
     X_test = np.array([i[1:] for i in test_data])
-    y_train, y_train_onehot = convert_onehot(test_data)
+    y_test, y_test_onehot = convert_onehot(test_data)
+    X_train = np.array(X_train , dtype=np.float32)
+    y_train = np.array(y_train , dtype=np.int32)
+    X_test = np.array(X_test , dtype=np.float32)
+    y_test = np.array(y_test , dtype=np.int32)
     
-    train = chainer.datasets.TupleDataset(X_train.T, y_train.T)
-    test = chainer.datasets.TupleDataset(X_test.astype(np.float32), y_test.flatten().astype(np.int32))
+    train = chainer.datasets.TupleDataset(X_train, y_train)
+    test = chainer.datasets.TupleDataset(X_test, y_test)
 
     train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
     test_iter = chainer.iterators.SerialIterator(test, args.batchsize,

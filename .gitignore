@@ -5,7 +5,9 @@
 /env
 /venv
 /venv
+Iris/result
 /Titanic/__pycache__
 /venv
 .vs
 *.pyc
+*.csv
